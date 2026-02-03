@@ -251,10 +251,72 @@ class UIController {
         }
     }
 
-    loadScenario(scenarioKey, event) {
-
+        loadScenario(scenarioKey, event) {
         const scenario = SCENARIOS[scenarioKey];
         if (!scenario) return;
+
+        // Clear world
+        this.world.reset();
+        
+        // Setup scenario
+        scenario.setup(this.world);
+        this.currentScenario = scenarioKey;
+        
+        // Update UI: Remove active from all, add to clicked
+        document.querySelectorAll('.scenario-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        if (event && event.target) {
+            event.target.classList.add('active');
+        }
+
+        // Update educational content
+        this.updateEducationalContent();
+        
+        // Reset to paused
+        this.isPaused = true;
+        this.controls.playPauseBtn.textContent = '▶ Play';
+        this.controls.playPauseBtn.classList.remove('active');
+    }
+
+    resetScenario() {
+        if (this.currentScenario) {
+            this.loadScenario(this.currentScenario);
+        }
+    }
+
+    stepFrame() {
+        this.world.step();
+        this.renderer.render();
+    }
+
+    updateEducationalContent() {
+        if (this.eduModule && this.currentScenario) {
+            this.eduModule.update(this.currentScenario);
+        }
+    }
+
+    updateProblemContent() {
+        if (this.eduModule && this.currentScenario) {
+            this.eduModule.showProblem(this.currentScenario);
+        }
+    }
+
+    updateBodyProperty(property, value) {
+        this.world.bodies.forEach(body => {
+            if (property === 'friction') {
+                body.staticFriction = value.static !== undefined ? value.static : body.staticFriction;
+                body.kineticFriction = value.kinetic !== undefined ? value.kinetic : body.kineticFriction;
+            } else {
+                body[property] = value;
+            }
+        });
+    }
+
+    updateConstraintProperty(property, value) {
+        this.world.constraints.forEach(c => c[property] = value);
+    }
+}
 
         // Clear world
         this.world.reset();
