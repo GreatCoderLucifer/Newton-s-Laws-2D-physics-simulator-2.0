@@ -242,15 +242,17 @@ class UIController {
                 const btn = document.createElement('button');
                 btn.className = 'scenario-btn';
                 btn.textContent = scenario.name;
-                btn.addEventListener('click', () => {
-                    this.loadScenario(key);
-                });
+                btn.addEventListener('click', (e) => {
+    this.loadScenario(key, e);
+});
+
                 grid.appendChild(btn);
             });
         }
     }
 
-    loadScenario(scenarioKey) {
+    loadScenario(scenarioKey, event) {
+
         const scenario = SCENARIOS[scenarioKey];
         if (!scenario) return;
 
@@ -267,6 +269,7 @@ class UIController {
             btn.classList.remove('active');
         });
         event.target.classList.add('active');
+
         
         // Update educational content
         this.updateEducationalContent();
