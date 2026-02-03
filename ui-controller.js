@@ -268,7 +268,17 @@ class UIController {
         document.querySelectorAll('.scenario-btn').forEach(btn => {
             btn.classList.remove('active');
         });
-        event.target.classList.add('active');
+        if (event && event.target) {
+    event.target.classList.add('active');
+} else {
+    // fallback: activate by scenario key
+    document.querySelectorAll('.scenario-btn').forEach(btn => {
+        if (btn.textContent === SCENARIOS[scenarioKey].name) {
+            btn.classList.add('active');
+        }
+    });
+}
+
 
         
         // Update educational content
